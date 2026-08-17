@@ -90,6 +90,22 @@ Po edycji wgraj zmieniony plik przez **Add file → Upload files** w repozytoriu
 Strona zaktualizuje się w ciągu minuty. Uczeń może potrzebować odświeżyć ją
 z pominięciem pamięci podręcznej, a na telefonie zamknąć i otworzyć kartę.
 
+## Kod wyniku
+
+Pod kartą wyników uczeń znajdzie sekcję „Wyślij wynik nauczycielowi”. Może podpisać
+się imieniem i skopiować link albo sam kod. Nauczyciel otwiera link i widzi tę samą
+kartę wyników co uczeń: punkty, obszary, każdą odpowiedź, samoocenę zadań otwartych.
+
+Cały wynik siedzi w kodzie, a kod w części adresu po znaku `#`, której przeglądarka
+nigdy nie wysyła na serwer. Nie ma bazy danych, konta ani logowania. Dla pełnego
+testu z polskiego, razem z dwiema dłuższymi wypowiedziami, kod ma około 420 znaków.
+
+Gdyby komunikator popsuł link, uczeń wysyła sam kod, a nauczyciel wkleja go na
+stronie `wynik.html`. Strona przyjmuje zarówno kod, jak i wklejony cały link.
+
+Nauczyciel może poprawić samoocenę zadań otwartych i wynik przeliczy się od razu,
+ale zmiana zostaje w jego przeglądarce i nie wraca do ucznia.
+
 ## Prywatność
 
 Adres jest publiczny, więc wejdzie na niego każdy, kto go zna. Nie ma logowania

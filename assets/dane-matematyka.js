@@ -100,3 +100,7 @@ window.TEST = {
       w:"Najczęstsza błędna odpowiedź to 20%, czyli założenie, że skoro bok rośnie o jedną piątą, to pole rośnie tak samo. Druga to 40%, z pomylenia kwadratu z podwojeniem. Uwaga dla oceniającego: sprawdzenie na liczbie a = 10 jest przykładem, a nie dowodem, i podstawa programowa wymaga, żeby uczeń widział tę różnicę." }
   ]
 };
+
+/* rejestr dla strony wynik.html, która musi znać wszystkie trzy testy naraz */
+window.TESTS = window.TESTS || {};
+window.TESTS[window.TEST.key] = window.TEST;

@@ -108,3 +108,7 @@ window.TEST = {
       w:"Punkt najczęściej ucieka przez brak podpisu nadawcy, na drugim miejscu jest pominięty termin. Ogłoszenie nie zaczyna się od Cześć i nie kończy Pozdrawiam, bo to nie list. W arkuszu z 2025 r. analogiczne zadanie miało poziom wykonania 38%, więc nie jest to formalność do odhaczenia." }
   ]
 };
+
+/* rejestr dla strony wynik.html, która musi znać wszystkie trzy testy naraz */
+window.TESTS = window.TESTS || {};
+window.TESTS[window.TEST.key] = window.TEST;

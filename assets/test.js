@@ -5,6 +5,7 @@
   "use strict";
 
   var T = window.TEST;
+  var E8 = window.E8;
   var KEY = "e8diag.v2";
 
   var store = {};
@@ -19,19 +20,8 @@
 
   /* ---------- pomocnicze ---------- */
 
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-  function nl(s) { return esc(s).replace(/\n/g, "<br>"); }
-  function norm(s) {
-    return String(s).toLowerCase()
-      .replace(/[‘’ʼ]/g, "'")
-      .replace(/[.,!?;:]/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
+  var esc = E8.esc, nl = E8.nl, each = E8.each;
+
   function plural(n, a, b, c) {
     var m10 = n % 10, m100 = n % 100;
     if (n === 1) return a;
@@ -39,7 +29,6 @@
     return c;
   }
   function answered(v) { return v !== undefined && v !== null && v !== ""; }
-  function each(list, fn) { Array.prototype.forEach.call(list, fn); }
 
   /* ---------- stan ---------- */
 
@@ -228,129 +217,20 @@
 
   /* ---------- wyniki ---------- */
 
-  function autoScore(q, a) {
-    if (q.o) return (a === q.c) ? q.p : 0;
-    if (q.ty === "text") {
-      if (typeof a !== "string" || !a.trim()) return 0;
-      var v = norm(a);
-      return q.acc.some(function (x) { return norm(x) === v; }) ? q.p : 0;
-    }
-    return null;
-  }
-
-  function critScore(qi) {
-    return (S.crit[qi] || []).filter(Boolean).length;
-  }
-
-  function tally() {
-    var got = 0, byArea = {};
-    Object.keys(T.areas).forEach(function (k) { byArea[k] = { got: 0, max: 0 }; });
-    T.q.forEach(function (q, j) {
-      var auto = autoScore(q, S.ans[j]);
-      var pts = (auto === null) ? critScore(j) : auto;
-      got += pts;
-      byArea[q.a].got += pts;
-      byArea[q.a].max += q.p;
-    });
-    return { got: got, byArea: byArea };
-  }
-
   function renderResults() {
     topbar.hidden = true;
     foot.hidden = false;
 
-    var t = tally();
-    var pct = Math.round(t.got / T.total * 100);
-
-    var verdict;
-    if (pct >= 85) verdict = "Wynik wyraźnie powyżej średniej. Ostatnie punkty siedzą w zadaniach otwartych i w pełnej poprawności zapisu, bo tam nie wybacza się drobiazgów.";
-    else if (pct >= 65) verdict = "Mniej więcej średnia krajowa. Luki są punktowe, więc powtarzanie wszystkiego to strata czasu. Zobacz, który obszar odstaje, i weź się za niego.";
-    else if (pct >= 40) verdict = "Co najmniej jeden obszar wypadł systemowo słabo. Zacznij od najsłabszego. Reszta zwykle podciąga się sama, bo te umiejętności się zazębiają.";
-    else verdict = "Materiał wymaga pracy od podstaw. Wybierz jeden obszar i zamknij go, zanim ruszysz dalej. Praca nad wszystkim naraz zwykle kończy się tym, że nie wchodzi nic.";
-
-    var areaBars = Object.keys(t.byArea).map(function (k) {
-      var b = t.byArea[k];
-      if (!b.max) return "";
-      var p = Math.round(b.got / b.max * 100);
-      var cls = p >= 70 ? " good" : (p < 50 ? " low" : "");
-      return '<div class="bar' + cls + '"><div class="lab"><span>' + esc(T.areas[k]) + "</span><b>" + b.got + "/" + b.max + " · " + p + "%</b></div>" +
-        '<div class="track"><div class="fill" style="width:' + p + '%"></div></div></div>';
-    }).join("");
-
-    var reviews = T.q.map(function (q, j) {
-      var a = S.ans[j];
-      var auto = autoScore(q, a);
-      var pts = (auto === null) ? critScore(j) : auto;
-      var mark = (auto === null) ? "s" : (pts === q.p ? "y" : "n");
-      var sym = (auto === null) ? "≈" : (pts === q.p ? "✓" : "✕");
-
-      var detail = "";
-      if (q.o) {
-        detail += '<div class="row"><span class="k">Twoja odpowiedź</span>' +
-          (a === undefined ? '<span class="muted">brak odpowiedzi</span>'
-            : '<span class="' + (a === q.c ? "good" : "wrong") + '">' + "ABCD"[a] + ". " + esc(q.o[a]) + "</span>") + "</div>";
-        if (a !== q.c) {
-          detail += '<div class="row"><span class="k">Poprawna odpowiedź</span><span class="good">' + "ABCD"[q.c] + ". " + esc(q.o[q.c]) + "</span></div>";
-        }
-      } else if (q.ty === "text") {
-        detail += '<div class="row"><span class="k">Twoja odpowiedź</span>' +
-          (a ? '<span class="' + (pts ? "good" : "wrong") + '">' + esc(a) + "</span>" : '<span class="muted">brak odpowiedzi</span>') + "</div>";
-        detail += '<div class="row"><span class="k">Uznawane odpowiedzi</span><span class="good">' + q.acc.map(esc).join(" · ") + "</span></div>";
-      } else {
-        detail += '<div class="row"><span class="k">Twoja odpowiedź</span>' +
-          (a ? "<div>" + nl(a) + "</div>" : '<span class="muted">brak odpowiedzi</span>') + "</div>";
-        if (q.acc) {
-          var ok = a && q.acc.some(function (x) { return norm(x) === norm(a); });
-          detail += '<div class="row"><span class="k">Sprawdzenie liczby</span><span class="' + (ok ? "good" : "wrong") + '">' +
-            (ok ? "wynik się zgadza" : "wynik: " + esc(q.acc[0])) + "</span></div>";
-        }
-        detail += '<div class="row"><span class="k">Rozwiązanie wzorcowe</span><div class="model">' + nl(q.model) + "</div></div>";
-        detail += '<div class="row"><span class="k">Oceń swoją pracę. Każde spełnione kryterium to 1 punkt</span>' +
-          '<div class="crit" data-q="' + j + '">' + q.crit.map(function (c, ci) {
-            var on = (S.crit[j] || [])[ci];
-            return '<label class="' + (on ? "on" : "") + '"><input type="checkbox" data-ci="' + ci + '"' + (on ? " checked" : "") + ">" +
-              "<span>" + esc(c) + "</span></label>";
-          }).join("") + "</div></div>";
-      }
-      detail += '<div class="why">' + esc(q.w) + "</div>";
-
-      return '<details class="rev"><summary>' +
-        '<span class="mark ' + mark + '">' + sym + "</span>" +
-        '<span class="ttl">' + esc(q.t) + "</span>" +
-        '<span class="sc">' + pts + "/" + q.p + "</span></summary>" +
-        '<div class="detail">' + detail + "</div></details>";
-    }).join("");
-
-    var hasSelf = T.q.some(function (q) { return q.ty === "open"; });
-
     app.innerHTML =
       '<p class="eyebrow">' + esc(T.name) + " · wynik</p>" +
       "<h1>Karta wyników</h1>" +
-      '<div class="score"><div><div class="big">' + t.got + '<span class="of">/' + T.total + '</span></div><div class="pct">' + pct + "%</div></div>" +
-      '<div class="verdict">' + esc(verdict) + "</div></div>" +
-      (hasSelf ? '<div class="note warn"><span class="lbl">Zadania otwarte</span><p>Zadania ze znakiem ≈ oceniasz samodzielnie. Rozwiń je, przeczytaj rozwiązanie wzorcowe i zaznacz te kryteria, które twoja praca faktycznie spełnia. Wynik przeliczy się od razu.</p></div>' : "") +
-      "<h2>Obszary umiejętności</h2>" +
-      '<div class="bars">' + areaBars + "</div>" +
-      '<p class="muted"><small>Suma punktów mówi mniej niż <b>różnica między obszarami</b>. Obszar poniżej połowy bierz na warsztat pierwszy, nawet jeśli reszta wygląda przyzwoicie.</small></p>' +
-      "<h2>Zadanie po zadaniu</h2>" +
-      '<p class="muted"><small>Rozwiń dowolne zadanie, żeby zobaczyć poprawną odpowiedź i wyjaśnienie.</small></p>' +
-      reviews +
+      E8.scorecard(T, S.ans, S.crit, { mine: true }) +
+      shareHTML() +
       '<div class="nav" style="margin-top:20px"><button class="btn ghost" id="again">Rozwiąż ponownie</button>' +
       '<a class="btn primary" id="home" href="./" style="text-align:center;text-decoration:none">Inny przedmiot</a></div>';
 
-    each(app.querySelectorAll(".crit"), function (box) {
-      var qi = parseInt(box.getAttribute("data-q"), 10);
-      each(box.querySelectorAll("input"), function (inp) {
-        inp.onchange = function () {
-          var ci = parseInt(inp.getAttribute("data-ci"), 10);
-          if (!S.crit[qi]) S.crit[qi] = [];
-          S.crit[qi][ci] = inp.checked;
-          inp.parentNode.classList.toggle("on", inp.checked);
-          persist();
-          refreshScore();
-        };
-      });
-    });
+    E8.wireCrit(app, T, S.ans, S.crit, function () { persist(); wireShare(); });
+    wireShare();
 
     document.getElementById("again").onclick = function () {
       if (!confirm("Wyczyścić odpowiedzi z tego testu i zacząć od nowa?")) return;
@@ -359,29 +239,89 @@
     };
   }
 
-  function refreshScore() {
-    var t = tally();
-    var big = app.querySelector(".score .big");
-    if (big) big.innerHTML = t.got + '<span class="of">/' + T.total + "</span>";
-    var pctEl = app.querySelector(".score .pct");
-    if (pctEl) pctEl.textContent = Math.round(t.got / T.total * 100) + "%";
+  /* ---------- kod wyniku do wysłania ---------- */
 
-    var bars = app.querySelectorAll(".bars .bar");
-    Object.keys(t.byArea).forEach(function (k, idx) {
-      var b = t.byArea[k], el = bars[idx];
-      if (!el || !b.max) return;
-      var p = Math.round(b.got / b.max * 100);
-      el.className = "bar" + (p >= 70 ? " good" : (p < 50 ? " low" : ""));
-      el.querySelector(".lab b").textContent = b.got + "/" + b.max + " · " + p + "%";
-      el.querySelector(".fill").style.width = p + "%";
-    });
+  var WHO = "e8diag.who";
 
-    var revs = app.querySelectorAll(".rev");
-    T.q.forEach(function (q, j) {
-      if (q.ty !== "open") return;
-      var el = revs[j];
-      if (el) el.querySelector(".sc").textContent = critScore(j) + "/" + q.p;
-    });
+  function savedWho() {
+    try { return localStorage.getItem(WHO) || ""; } catch (e) { return ""; }
+  }
+
+  function shareHTML() {
+    return '<h2>Wyślij wynik nauczycielowi</h2>' +
+      '<p>Wynik nie wychodzi z tego telefonu sam z siebie. Poniższy kod zawiera twoje odpowiedzi; ' +
+      "wyślij go, a nauczyciel zobaczy dokładnie tę samą kartę wyników co ty.</p>" +
+      '<input class="field" id="who" maxlength="40" autocomplete="name" placeholder="Twoje imię (nieobowiązkowe)" value="' + esc(savedWho()) + '">' +
+      '<div class="nav"><button class="btn primary" id="cpLink">Kopiuj link z wynikiem</button>' +
+      '<button class="btn ghost" id="cpCode">Sam kod</button></div>' +
+      '<p class="muted" style="margin-top:10px"><small>Jeśli link po wklejeniu się rozjedzie, wyślij sam kod. ' +
+      'Nauczyciel wkleja go na stronie <b>wynik.html</b>.</small></p>' +
+      '<div class="codebox" id="codeOut"></div>';
+  }
+
+  function linkFor(code) {
+    var base = location.href.replace(/[^/]*$/, "");
+    return base + "wynik.html#" + code;
+  }
+
+  /* Kodowanie nie może wywrócić całej karty wyników, gdyby przeglądarka
+     okazała się zbyt stara na TextEncoder. */
+  function wireShare() {
+    var who = document.getElementById("who");
+    var box = document.getElementById("codeOut");
+    if (!who || !box) return;
+
+    var code;
+    try {
+      code = E8.encode(T, S.ans, S.crit, who.value);
+    } catch (e) {
+      box.textContent = "Ta przeglądarka nie umie zbudować kodu. Pokaż wynik nauczycielowi na ekranie albo zrób zrzut.";
+      return;
+    }
+    box.textContent = code;
+
+    who.oninput = function () {
+      try { localStorage.setItem(WHO, who.value); } catch (e) {}
+      code = E8.encode(T, S.ans, S.crit, who.value);
+      box.textContent = code;
+    };
+
+    hook("cpLink", function () { return linkFor(code); });
+    hook("cpCode", function () { return code; });
+  }
+
+  function hook(id, get) {
+    var b = document.getElementById(id);
+    if (!b) return;
+    var label = b.textContent;
+    b.onclick = function () {
+      copy(get(), function (ok) {
+        b.textContent = ok ? "Skopiowano" : "Zaznacz i skopiuj ręcznie";
+        setTimeout(function () { b.textContent = label; }, 2500);
+      });
+    };
+  }
+
+  function copy(text, done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fallback(text, done); });
+    } else {
+      fallback(text, done);
+    }
+  }
+
+  function fallback(text, done) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    done(ok);
   }
 
   load();

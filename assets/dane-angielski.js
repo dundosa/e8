@@ -116,3 +116,7 @@ window.TEST = {
       w:"Trzy zasady wprost z informatora, wszystkie kosztowne. Zero punktów za treść zeruje pozostałe kryteria. Praca krótsza niż 40 wyrazów jest oceniana wyłącznie za treść. Very, much, many, a lot oraz stopień wyższy i najwyższy nie liczą się jako rozwinięcie podpunktu, a uczniowie opierają na nich połowę zdań." }
   ]
 };
+
+/* rejestr dla strony wynik.html, która musi znać wszystkie trzy testy naraz */
+window.TESTS = window.TESTS || {};
+window.TESTS[window.TEST.key] = window.TEST;
