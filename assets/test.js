@@ -130,9 +130,9 @@
     return 0;
   }
 
-  function samePassAsPrev() {
-    return S.i > 0 && T.q[S.i - 1].pass === T.q[S.i].pass;
-  }
+  /* pozycja przewinięcia tekstu źródłowego, żeby nie gubić miejsca
+     przy przechodzeniu między zadaniami do tego samego tekstu */
+  var passKey = null, passScroll = 0;
 
   function renderTask() {
     var q = T.q[S.i], n = T.q.length;
@@ -147,9 +147,9 @@
 
     if (q.pass) {
       var p = T.passages[q.pass];
-      body += '<details class="passage"' + (samePassAsPrev() ? "" : " open") + ">" +
-        "<summary>" + esc(p.label) + "</summary>" +
-        '<div class="body">' + p.html + "</div></details>";
+      body += '<section class="passage" aria-label="' + esc(p.label) + '">' +
+        '<div class="hdr">' + esc(p.label) + "</div>" +
+        '<div class="body" id="passBody" tabindex="0">' + p.html + "</div></section>";
     }
 
     body += '<div class="card">' +
@@ -184,6 +184,13 @@
     }).join("") + "</div>";
 
     app.innerHTML = body;
+
+    var pb = document.getElementById("passBody");
+    if (pb) {
+      if (q.pass === passKey) pb.scrollTop = passScroll;
+      else { passKey = q.pass; passScroll = 0; }
+      pb.onscroll = function () { passScroll = pb.scrollTop; };
+    }
 
     each(app.querySelectorAll('input[name="q"]'), function (r) {
       r.onchange = function () {
