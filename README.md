@@ -1,39 +1,47 @@
-# Karta diagnostyczna E8 — jak wrzucić to na darmową stronę
+# Karta diagnostyczna E8
 
-Strona jest w całości statyczna: same pliki HTML, CSS i JS. Nie potrzebuje serwera,
-bazy danych ani domeny. Odpowiedzi zapisują się w przeglądarce ucznia (`localStorage`),
-więc nic nie wychodzi na zewnątrz i nie ma czego hostować poza plikami.
+Trzy testy diagnostyczne przed egzaminem ósmoklasisty: matematyka, język polski,
+język angielski. Każdy po 20 punktów i mniej więcej pół godziny.
 
-## Wersja szybka — GitHub Pages przez przeglądarkę
+Strona jest w całości statyczna, czyli same pliki HTML, CSS i JS. Nie potrzebuje
+serwera ani bazy danych. Odpowiedzi zapisują się w przeglądarce ucznia
+(`localStorage`), więc nic nie wychodzi na zewnątrz i poza plikami nie ma czego
+hostować.
+
+## Wdrożenie przez przeglądarkę
 
 Nie trzeba instalować gita ani niczego uruchamiać w terminalu.
 
-1. Załóż konto na <https://github.com> (darmowe) i zaloguj się.
-2. Kliknij **+** w prawym górnym rogu → **New repository**.
-   - **Repository name:** `e8` (nazwa pojawi się w adresie strony)
-   - zaznacz **Public** — GitHub Pages działa za darmo tylko dla repozytoriów publicznych
-   - **nie** zaznaczaj „Add a README file”
+1. Załóż darmowe konto na <https://github.com> i zaloguj się.
+2. Kliknij **+** w prawym górnym rogu, potem **New repository**.
+   - **Repository name:** `e8`, bo ta nazwa trafi do adresu strony
+   - zaznacz **Public**, ponieważ GitHub Pages działa za darmo tylko dla repozytoriów publicznych
+   - nie zaznaczaj „Add a README file”
    - kliknij **Create repository**
 3. Na pustej stronie repozytorium kliknij **uploading an existing file**.
-4. Przeciągnij do okna przeglądarki **zawartość** folderu `strona` — czyli pliki
+4. Przeciągnij do okna przeglądarki zawartość folderu `strona`, czyli pliki
    `index.html`, `matematyka.html`, `polski.html`, `angielski.html`, `.nojekyll`
-   oraz **cały folder** `assets`.
-   Ważne: przeciągasz zawartość folderu `strona`, a nie sam folder — plik
-   `index.html` musi wylądować w korzeniu repozytorium.
+   oraz cały folder `assets`.
+   Uwaga na jedną rzecz: przeciągasz zawartość folderu, a nie sam folder.
+   Plik `index.html` musi wylądować w korzeniu repozytorium.
 5. Na dole kliknij **Commit changes**.
-6. Wejdź w zakładkę **Settings** → w menu po lewej **Pages**.
+6. Wejdź w zakładkę **Settings**, a w menu po lewej w **Pages**.
    - **Source:** `Deploy from a branch`
-   - **Branch:** `main`, folder `/ (root)` → **Save**
-7. Odczekaj 1–2 minuty i odśwież stronę Settings → Pages. Pojawi się adres:
+   - **Branch:** `main`, folder `/ (root)`, potem **Save**
+7. Odczekaj minutę lub dwie i odśwież stronę Settings → Pages. Pojawi się adres:
 
    ```
    https://TWOJA-NAZWA-UZYTKOWNIKA.github.io/e8/
    ```
 
-   Ten adres wysyłasz drugiej osobie — działa na telefonie, tablecie i komputerze,
-   bez instalowania czegokolwiek i bez zakładania konta.
+   Ten adres wysyłasz drugiej osobie. Otwiera się na telefonie, tablecie
+   i komputerze, bez instalowania czegokolwiek i bez zakładania konta.
 
-## Wersja z terminalem
+Pierwszy build potrafi stać w kolejce dłużej niż kolejne. Jeśli po kilku minutach
+widzisz stronę 404, wymuś przebudowę: dowolna zmiana w repozytorium uruchamia ją
+od nowa.
+
+## Wdrożenie z terminala
 
 Jeśli masz zainstalowanego gita i `gh`:
 
@@ -53,8 +61,8 @@ Wszystkie zadania siedzą w trzech plikach w folderze `assets`:
 | plik | co zawiera |
 |---|---|
 | `dane-matematyka.js` | 16 zadań z matematyki |
-| `dane-polski.js` | 16 zadań z polskiego + tekst trenu |
-| `dane-angielski.js` | 18 zadań z angielskiego + tekst e-maila |
+| `dane-polski.js` | 16 zadań z polskiego oraz tekst trenu |
+| `dane-angielski.js` | 18 zadań z angielskiego oraz tekst e-maila |
 
 Format jednego zadania:
 
@@ -72,22 +80,25 @@ Format jednego zadania:
 
 Typy inne niż zamknięty:
 
-- `ty:"text"` + `acc:["uznawana","odpowiedź"]` — krótka odpowiedź, sprawdzana automatycznie
-  (porównanie z pominięciem wielkości liter i interpunkcji),
-- `ty:"open"` + `model:"..."` + `crit:[...]` — zadanie otwarte, ocena samodzielna;
-  **liczba kryteriów musi się równać liczbie punktów `p`**, bo każde kryterium to 1 punkt.
+- `ty:"text"` razem z `acc:["uznawana","odpowiedź"]` daje krótką odpowiedź sprawdzaną
+  automatycznie, z pominięciem wielkości liter i interpunkcji,
+- `ty:"open"` razem z `model:"..."` i `crit:[...]` daje zadanie otwarte oceniane
+  samodzielnie. Liczba kryteriów musi się równać liczbie punktów `p`, bo każde
+  kryterium to jeden punkt. To jedyna twarda reguła w tym formacie.
 
 Po edycji wgraj zmieniony plik przez **Add file → Upload files** w repozytorium.
-Strona zaktualizuje się w ciągu minuty. Uczeń może potrzebować odświeżyć stronę
-z pominięciem pamięci podręcznej (na telefonie: zamknąć i otworzyć kartę).
+Strona zaktualizuje się w ciągu minuty. Uczeń może potrzebować odświeżyć ją
+z pominięciem pamięci podręcznej, a na telefonie zamknąć i otworzyć kartę.
 
 ## Prywatność
 
-Adres jest publiczny — każdy, kto go zna, może wejść. Nie ma logowania ani zbierania
-danych: żadna odpowiedź nie opuszcza urządzenia ucznia. Wyniki widzisz tylko wtedy,
-gdy uczeń pokaże ci ekran albo zrobi zrzut ekranu.
+Adres jest publiczny, więc wejdzie na niego każdy, kto go zna. Nie ma logowania
+ani zbierania danych i żadna odpowiedź nie opuszcza urządzenia ucznia. Wyniki
+zobaczysz tylko wtedy, gdy uczeń pokaże ci ekran albo zrobi zrzut.
+
+Z tego samego powodu trzymaj poza repozytorium notatki dla nauczyciela.
+Zawierają klucze odpowiedzi.
 
 ## Podgląd lokalny
 
-Wystarczy otworzyć `index.html` podwójnym kliknięciem — działa też z pliku,
-bez serwera.
+Otwórz `index.html` podwójnym kliknięciem. Działa prosto z pliku, bez serwera.

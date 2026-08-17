@@ -1,4 +1,4 @@
-/* Karta diagnostyczna E8 — strona główna: stan zapisanych testów */
+/* Karta diagnostyczna E8, strona główna: stan zapisanych testów */
 
 (function () {
   "use strict";
@@ -27,7 +27,7 @@
     }
     if (!done) return;
     any = true;
-    el.textContent = done === s.n ? "Rozwiązany — wynik zapisany" : "W trakcie · " + done + "/" + s.n;
+    el.textContent = done === s.n ? "Rozwiązany, wynik zapisany" : "W trakcie · " + done + "/" + s.n;
   });
 
   var box = document.getElementById("clrbox");

@@ -1,4 +1,4 @@
-/* Karta diagnostyczna E8 — arkusz wspólny dla wszystkich podstron */
+/* Karta diagnostyczna E8, arkusz wspólny dla wszystkich podstron */
 
 :root {
   --paper:    #e8ecf2;
@@ -166,7 +166,7 @@ a { color: var(--accent); }
   margin-bottom: 12px;
 }
 
-/* wybór przedmiotu — kafle na stronie głównej */
+/* wybór przedmiotu, kafle na stronie głównej */
 .pick { display: grid; gap: 12px; margin: 20px 0 8px; }
 .pick a {
   text-align: left;
@@ -227,7 +227,7 @@ a { color: var(--accent); }
   font-size: .95rem;
 }
 
-/* odpowiedzi — bańki jak na karcie odpowiedzi */
+/* odpowiedzi, bańki jak na karcie odpowiedzi */
 .opts { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
 .opt {
   display: grid;

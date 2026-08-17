@@ -1,4 +1,4 @@
-/* Karta diagnostyczna E8 — silnik pojedynczego testu.
+/* Karta diagnostyczna E8, silnik pojedynczego testu.
    Wymaga wcześniej wczytanego pliku z danymi, który ustawia window.TEST. */
 
 (function () {
@@ -97,11 +97,11 @@
       "</ul>" +
 
       '<div class="note"><span class="lbl">Zanim zaczniesz</span><p>' + esc(T.tools) + "</p>" +
-      "<p>Rozwiązuj bez pomocy — test ma pokazać stan faktyczny, nie najlepszy możliwy wynik. Nie ma odliczania czasu; odpowiedzi zapisują się w tej przeglądarce, więc możesz przerwać i wrócić później.</p></div>" +
+      "<p>Rozwiązuj bez podpowiedzi. Test ma pokazać, jak jest naprawdę, a nie ile da się wycisnąć przy otwartym zeszycie. Nie ma odliczania czasu, a odpowiedzi zapisują się w przeglądarce, więc możesz przerwać w połowie i wrócić później.</p></div>" +
 
       "<h2>Co jest sprawdzane</h2>" +
       '<ul class="facts">' + areaRows + "</ul>" +
-      '<p class="muted"><small>Rozkład punktów jest celowo inny niż w arkuszu egzaminacyjnym: test ma wskazać obszar z luką, a nie oszacować wynik egzaminu.</small></p>' +
+      '<p class="muted"><small>Punkty rozłożyły się inaczej niż w arkuszu egzaminacyjnym i tak miało być. Ten test szuka obszaru z luką, zamiast szacować przyszły wynik.</small></p>' +
 
       '<div class="nav">' +
       (resume || full
@@ -256,10 +256,10 @@
     var pct = Math.round(t.got / T.total * 100);
 
     var verdict;
-    if (pct >= 85) verdict = "Poziom wyraźnie powyżej średniej. Pracuj nad zadaniami otwartymi i pełną poprawnością — tam zostają ostatnie punkty.";
-    else if (pct >= 65) verdict = "Poziom w okolicach średniej krajowej. Luki są punktowe — zobacz, który obszar odstaje, i pracuj tylko nad nim.";
-    else if (pct >= 40) verdict = "Luki systemowe w co najmniej jednym obszarze. Zacznij od tego, który wypadł najsłabiej — pozostałe zwykle podciągają się same.";
-    else verdict = "Potrzebna praca od podstaw. Wybierz jeden obszar i zamknij go, zanim przejdziesz do następnego.";
+    if (pct >= 85) verdict = "Wynik wyraźnie powyżej średniej. Ostatnie punkty siedzą w zadaniach otwartych i w pełnej poprawności zapisu, bo tam nie wybacza się drobiazgów.";
+    else if (pct >= 65) verdict = "Mniej więcej średnia krajowa. Luki są punktowe, więc powtarzanie wszystkiego to strata czasu. Zobacz, który obszar odstaje, i weź się za niego.";
+    else if (pct >= 40) verdict = "Co najmniej jeden obszar wypadł systemowo słabo. Zacznij od najsłabszego. Reszta zwykle podciąga się sama, bo te umiejętności się zazębiają.";
+    else verdict = "Materiał wymaga pracy od podstaw. Wybierz jeden obszar i zamknij go, zanim ruszysz dalej. Praca nad wszystkim naraz zwykle kończy się tym, że nie wchodzi nic.";
 
     var areaBars = Object.keys(t.byArea).map(function (k) {
       var b = t.byArea[k];
@@ -298,7 +298,7 @@
             (ok ? "wynik się zgadza" : "wynik: " + esc(q.acc[0])) + "</span></div>";
         }
         detail += '<div class="row"><span class="k">Rozwiązanie wzorcowe</span><div class="model">' + nl(q.model) + "</div></div>";
-        detail += '<div class="row"><span class="k">Oceń swoją pracę — 1 pkt za każde spełnione kryterium</span>' +
+        detail += '<div class="row"><span class="k">Oceń swoją pracę. Każde spełnione kryterium to 1 punkt</span>' +
           '<div class="crit" data-q="' + j + '">' + q.crit.map(function (c, ci) {
             var on = (S.crit[j] || [])[ci];
             return '<label class="' + (on ? "on" : "") + '"><input type="checkbox" data-ci="' + ci + '"' + (on ? " checked" : "") + ">" +
@@ -321,10 +321,10 @@
       "<h1>Karta wyników</h1>" +
       '<div class="score"><div><div class="big">' + t.got + '<span class="of">/' + T.total + '</span></div><div class="pct">' + pct + "%</div></div>" +
       '<div class="verdict">' + esc(verdict) + "</div></div>" +
-      (hasSelf ? '<div class="note warn"><span class="lbl">Zadania otwarte</span><p>Zadania oznaczone znakiem ≈ oceniasz samodzielnie. Rozwiń je, przeczytaj rozwiązanie wzorcowe i zaznacz kryteria, które twoja praca spełnia. Wynik przeliczy się od razu.</p></div>' : "") +
+      (hasSelf ? '<div class="note warn"><span class="lbl">Zadania otwarte</span><p>Zadania ze znakiem ≈ oceniasz samodzielnie. Rozwiń je, przeczytaj rozwiązanie wzorcowe i zaznacz te kryteria, które twoja praca faktycznie spełnia. Wynik przeliczy się od razu.</p></div>' : "") +
       "<h2>Obszary umiejętności</h2>" +
       '<div class="bars">' + areaBars + "</div>" +
-      '<p class="muted"><small>Obszar poniżej 50% wymaga pracy w pierwszej kolejności. Największą wartość diagnostyczną ma nie suma punktów, tylko <b>różnica między obszarami</b>.</small></p>' +
+      '<p class="muted"><small>Suma punktów mówi mniej niż <b>różnica między obszarami</b>. Obszar poniżej połowy bierz na warsztat pierwszy, nawet jeśli reszta wygląda przyzwoicie.</small></p>' +
       "<h2>Zadanie po zadaniu</h2>" +
       '<p class="muted"><small>Rozwiń dowolne zadanie, żeby zobaczyć poprawną odpowiedź i wyjaśnienie.</small></p>' +
       reviews +
